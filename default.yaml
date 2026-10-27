@@ -1,65 +1,40 @@
-# Frozen parameter set for the published results.
-#
-# These are the values the paper reports in its complete parameter listing.
-# They are NOT loaded at runtime -- each one is a keyword default on the
-# function named below, which is what actually produced every number.  This
-# file exists so the operating point can be read in one place instead of being
-# reconstructed from seven signatures and one constant.
-#
-# To change the operating point, change the code default and re-run; then
-# update this file to match.
+# The paper's operating point. For reading only, not loaded: each value is a
+# default in the function named on its section, so change it there.
 
 spatial:
-  # spatialdiar/spatial/doa.py :: SpatialProcessor.__init__
-  processor:
+  processor:               # doa.SpatialProcessor
     fs: 16000              # Hz
-    nfft: 512              # 32 ms window
-    hop: 256               # 16 ms hop
-    flo: 300.0             # Hz, band floor -- below this the array is blind
-    fhi: 4000.0            # Hz, band ceiling
-    ang_step: 2.0          # degrees per histogram bin
-    coh_tc: 7              # frames of coherence smoothing (~0.11 s)
-    block: 4096            # frames per processing block (memory bound)
-    chunk: 256             # angle-grid chunk for the steering product
+    nfft: 512              # 32 ms
+    hop: 256               # 16 ms
+    flo: 300.0             # Hz
+    fhi: 4000.0            # Hz
+    ang_step: 2.0          # degrees
+    coh_tc: 7              # frames of coherence smoothing
+    block: 4096            # frames per block (memory only)
+    chunk: 256             # angles per steering-product chunk (memory only)
 
-  # spatialdiar/spatial/doa.py :: bin_weights
-  bin_weights:
-    coh_floor: 0.35        # bins below this coherence carry no weight
-    energy_exp: 0.3        # sublinear energy weighting
+  bin_weights:             # doa.bin_weights
+    coh_floor: 0.35
+    energy_exp: 0.3
 
-  # spatialdiar/spatial/doa.py :: angle_hist
-  histogram:
-    t_smooth: 9            # frames of uniform time smoothing (~0.14 s)
-    a_sigma_bins: 3.0      # Gaussian angle smoothing, in bins (6 degrees)
+  histogram:               # doa.angle_hist
+    t_smooth: 9            # frames
+    a_sigma_bins: 3.0      # bins (6 degrees)
 
 seats:
-  # spatialdiar/spatial/seats.py :: discover_ridges -- blind seat discovery
-  # These are the paper's frozen operating point (Table: Complete Parameter
-  # Listing), recovered unchanged by a held-out development/test split by
-  # meeting.
-  discovery:
-    min_sep: 20.0          # degrees between accepted seats
-    prom_frac: 0.03        # peak prominence, as a fraction of the max
-    height_frac: 0.08      # peak height, as a fraction of the max
-    # No speaker count and no candidate cap: every peak passing these three
-    # tests becomes a seat (discover_ridges has no count or cap argument).
+  discovery:               # seats.discover_ridges, no speaker count
+    min_sep: 20.0          # degrees
+    prom_frac: 0.03        # of the profile maximum
+    height_frac: 0.08      # of the profile maximum
 
-  # spatialdiar/spatial/seats.py :: seat_mass
-  assignment:
-    half: 15.0            # degrees each side of a seat counted as its mass
+  assignment:              # seats.seat_mass
+    half: 15.0             # degrees either side of a seat
 
-  # spatialdiar/spatial/seats.py :: detect, GUIDE_Q
-  activity:
-    q_guide: 0.15          # the method's threshold (seats.GUIDE_Q): seat-mass
-                           # share for a seat to count as active, used for the
-                           # GSS guide and its DER; diarize.py uses it
-    q: 0.35                # detect()'s own default: the oracle-seat estimator
-                           # diagnostic only
-    # always on, not a parameter: speech frames with no winner go to the
-    # loudest seat
+  activity:                # seats.detect
+    q_guide: 0.15          # seats.GUIDE_Q, what diarize.py uses
+    q: 0.35                # detect()'s own default, oracle-seat diagnostic
 
-vad:
-  # spatialdiar/spatial/vad.py :: noise_floor_vad
+vad:                       # vad.noise_floor_vad
   k: 3.0                   # speech if energy > k * floor
-  floor_pct: 10            # percentile of smoothed energy taken as the floor
-  hang: 8                  # frames of hangover (~0.13 s)
+  floor_pct: 10            # percentile taken as the floor
+  hang: 8                  # frames of hangover
