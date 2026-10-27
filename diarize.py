@@ -1,3 +1,5 @@
+# Runs the full method: multichannel audio in, RTTM out (python diarize.py meeting.wav --array ami8)
+
 import argparse
 import os
 from math import gcd
