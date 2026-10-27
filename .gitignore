@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+
+# every run output lands here; regenerate with the drivers
+results_out/
+
+# large inputs live in ../data/ and are fetched, never committed
+*.zip
+*.wav
+*.flac
+*.npz

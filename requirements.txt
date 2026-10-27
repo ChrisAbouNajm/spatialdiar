@@ -1,0 +1,10 @@
+# The method needs numpy and scipy. Nothing else.
+#
+# That is not an accident of packaging -- it is why the front-end runs in real
+# time on a Raspberry Pi 5 in 311 MB.
+numpy>=2.0
+scipy>=1.14
+
+# Only diarize.py reads audio files. Import `spatialdiar` directly and you do
+# not need this.
+soundfile>=0.13        # needs libsndfile>=1.1
