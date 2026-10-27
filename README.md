@@ -28,11 +28,13 @@ which is what makes the output usable as a guide for a separator.
 
 ```bash
 pip install -r requirements.txt
-python diarize.py meeting.wav --array ami8 --out meeting.rttm   # who spoke when -> RTTM
+python diarize.py meeting.wav --array ami8   # who spoke when -> meeting.rttm
 ```
 
-`diarize.py` resamples any other rate to 16 kHz, the rate every frame setting
-assumes. The library does not, so pass it 16 kHz audio.
+The RTTM is written next to the input, named after it (after the first file
+when each channel is its own file). `diarize.py` resamples any other rate to
+16 kHz, the rate every frame setting assumes. The library does not, so pass it
+16 kHz audio.
 
 Or as a library:
 
@@ -77,8 +79,9 @@ while the transcripts it leads to are better.
 If nothing separates the voices afterwards — this is the only diarization step,
 or each word of one transcript has to go to one speaker — overlap marking works
 against you. At q=0.15 a seat often still counts as active while only its
-neighbour speaks, so most words touch two speakers. Use `--q 0.5` instead
-(`seats.detect(..., q=0.5)` in the library): at most one seat can hold more
+neighbour speaks, so most words touch two speakers. Use q=0.5 instead (in
+`diarize.py`, change `q=seats.GUIDE_Q` to `q=0.5`; in the library, pass
+`q=0.5` to `seats.detect`): at most one seat can hold more
 than half of a frame's spatial mass and the strongest is always marked, so
 exactly one seat is active in each speech frame. Giving words to seats this way
 was right more often than at q=0.15 on 27 four-mic AMI windows (91.1% of words

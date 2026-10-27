@@ -33,18 +33,6 @@ def main():
                          'array order')
     ap.add_argument('--array', default='ami8', choices=sorted(geometry.ARRAYS),
                     help='microphone geometry (default: ami8)')
-    ap.add_argument('--q', type=float, default=seats.GUIDE_Q,
-                    help='seat-mass share for a seat to count as active '
-                         f'(default: {seats.GUIDE_Q}, the paper\'s operating '
-                         'point for separation guides)')
-    ap.add_argument('--uri', default=None,
-                    help='recording id for RTTM column 2 '
-                         '(default: the first filename without extension)')
-    ap.add_argument('--gap', type=float, default=0.4,
-                    help='merge segments closer than this, seconds '
-                         '(default: 0.4)')
-    ap.add_argument('--out', default=None,
-                    help='output RTTM (default: alongside the input)')
     a = ap.parse_args()
 
     x, fs = load_channels(a.audio)
@@ -52,8 +40,8 @@ def main():
     if x.shape[0] != len(arr['xy']):
         raise SystemExit(f'{a.array} expects {len(arr["xy"])} channels, '
                          f'got {x.shape[0]}')
-    uri = a.uri or os.path.splitext(os.path.basename(a.audio[0]))[0]
-    out = a.out or os.path.splitext(a.audio[0])[0] + '.rttm'
+    uri = os.path.splitext(os.path.basename(a.audio[0]))[0]
+    out = os.path.splitext(a.audio[0])[0] + '.rttm'
     print(f'{x.shape[0]} ch x {x.shape[1] / fs:.1f} s at {fs} Hz, '
           f'geometry {a.array}')
     if fs != FS:
@@ -78,11 +66,11 @@ def main():
 
     speech = vad.noise_floor_vad(res['energy'].sum(1))
     det = seats.detect(seats.seat_mass(hist, res['angs'], found), speech,
-                       q=a.q)
+                       q=seats.GUIDE_Q)
     labels = [f'{uri}_seat{i}' for i in range(len(found))]
     n = rttm.write_rttm(out, uri,
                         rttm.det_to_intervals(det, res['times'], labels),
-                        gap=a.gap)
+                        gap=0.4)
     ovl = ((det.sum(0) >= 2) & speech).mean()
     print(f'speech {speech.mean() * 100:.0f}% of frames, '
           f'{ovl * 100:.1f}% with two or more seats active')
