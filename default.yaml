@@ -3,11 +3,11 @@
 
 spatial:
   processor:               # doa.SpatialProcessor
-    fs: 16000              # Hz
+    fs: 16000              # in Hz
     nfft: 512              # 32 ms
     hop: 256               # 16 ms
-    flo: 300.0             # Hz
-    fhi: 4000.0            # Hz
+    flo: 300.0             # in Hz
+    fhi: 4000.0            # in Hz
     ang_step: 2.0          # degrees
     coh_tc: 7              # frames of coherence smoothing
     block: 4096            # frames per block (memory only)
