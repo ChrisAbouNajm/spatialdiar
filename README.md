@@ -38,12 +38,9 @@ hist = doa.angle_hist(res, doa.bin_weights(res))
 
 found, info = seats.discover_ridges(hist.mean(0), res['angs'])
 speech = vad.noise_floor_vad(res['energy'].sum(1))
+mass = seats.seat_mass(hist, res['angs'], found)
 
-det = seats.detect(
-    seats.seat_mass(hist, res['angs'], found),
-    speech,
-    q=seats.GUIDE_Q
-)
+det = seats.detect(mass, speech, q=seats.GUIDE_Q)
 
 rttm.write_rttm(
     'out.rttm', 'meeting',
@@ -61,7 +58,7 @@ Library inputs should already be sampled at 16 kHz.
 
 The default threshold, `q=0.15`, is the operating point used in the paper for guided source separation (GSS). It prioritizes speech coverage, particularly during overlap, at the expense of additional false activity.
 
-For applications requiring a single speaker label per frame, `q=0.5` is an alternative:
+For applications requiring a single speaker label per frame, `q=0.5` is an alternative (for the CLI, change `q=seats.GUIDE_Q` in `diarize.py`):
 
 ```python
 det = seats.detect(mass, speech, q=0.5)
